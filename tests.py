@@ -223,6 +223,19 @@ class TestMathFunctions(unittest.TestCase):
         ]
         self.baseTestMethod(points, resultValid)
 
+    def test_edge7(self):
+        points: list[Point] = [
+            (2, 2),
+            (1, 1),
+            (0, 0),
+            (3, 3),
+            (4, 4)
+        ]
+        resultValid: list[Point] = [
+            (4, 4),
+            (0, 0)
+        ]
+        self.baseTestMethod(points, resultValid)
 
 if __name__ == "__main__":
     _ = unittest.main()

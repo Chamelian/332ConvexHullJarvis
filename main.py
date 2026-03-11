@@ -4,15 +4,12 @@ CSCI 332 Spring 2025
 Programming Assignment #class18
 I acknowledge that I have worked on this assignment independently, except where explicitly noted and referenced. Any collaboration or use of external resources has been properly cited. I am fully aware of the consequences of academic dishonesty and agree to abide by the university's academic integrity policy. I understand the importance the consequences of plagiarism.
 """
-import sys
+
 type Point = tuple[float, float]
 
-
-def convex_hull_jarvis(points: list[Point]) -> list[Point]:
-    hull: list[Point] = []
+def testCollinearity(points: list[Point]) -> tuple[list[Point], bool]:
     lenPoints: int = len(points)
-
-    # Get starting point (and test for errors)
+    hull: list[Point] = []
     xIter: int = 1
     yIter: int = 1
     leftMostIndex: int = 0
@@ -36,22 +33,35 @@ def convex_hull_jarvis(points: list[Point]) -> list[Point]:
             downMostIndex = i
 
         # Confirms that all points are not collinear.
-        if point[0] == points[leftMostIndex][0]:
-            yIter += 1
-        if point[1] == points[leftMostIndex][1]:
+        if getOrientation(point, points[leftMostIndex], points[rightMostIndex]) == 0:
             xIter += 1
+        if getOrientation(point, points[upMostIndex], points[downMostIndex]) == 0:
+            yIter += 1
 
     if xIter == lenPoints:
         hull.append(points[leftMostIndex])
         hull.append(points[rightMostIndex])
-        return hull
+        return (hull, True)
     elif yIter == lenPoints:
         hull.append(points[upMostIndex])
         hull.append(points[downMostIndex])
-        return hull
+        return (hull, True)
 
-    # Default to leftmost.
     hull.append(points[leftMostIndex])
+    return (hull, False)
+
+def convex_hull_jarvis(points: list[Point] | set[Point]) -> list[Point]:
+    points = list(set(points))
+    hull: list[Point]
+    lenPoints: int = len(points)
+
+    if lenPoints < 4:
+        return points
+
+    # Default to leftmost
+    hull, earlyReturn = testCollinearity(points)
+    if earlyReturn:
+        return hull
 
     # Create hull
     nextPoint: Point
